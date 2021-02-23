@@ -1,7 +1,7 @@
 using System.Linq;
 using AutoMapper;
 using vega.Controllers.Resources;
-using vega.Models;
+using vega.Core.Models;
 
 namespace vega.Mapping
 {
@@ -11,11 +11,17 @@ namespace vega.Mapping
         {
             // Domain to API Resource
             CreateMap<Make, MakeResource>();
-            CreateMap<Model, ModelResource>();
+            CreateMap<Make, KeyValuePairResource>();
+            CreateMap<Model, KeyValuePairResource>();
             CreateMap<Feature, KeyValuePairResource>();
             CreateMap<Vehicle, SaveVehicleResource>()
                 .ForMember(vr => vr.Contact, opt => opt.MapFrom(v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone }))
                 .ForMember(vr => vr.Features, opt => opt.MapFrom(v => v.Features.Select(vf => vf.Id)));
+            CreateMap<Vehicle, VehicleResource>()
+                //.ForMember(vr => vr.Make, opt => opt.MapFrom(v => new KeyValuePairResource { Id = v.Model.Make.Id, Name = v.Model.Make.Name }))
+                .ForMember(vr => vr.Make, opt => opt.MapFrom(v => v.Model.Make))
+                .ForMember(vr => vr.Contact, opt => opt.MapFrom(v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone }))
+                .ForMember(vr => vr.Features, opt => opt.MapFrom(v => v.Features.Select(vf => new KeyValuePairResource { Id = vf.Id, Name = vf.Name })));
 
             // API Resource to Domain
             CreateMap<SaveVehicleResource, Vehicle>()

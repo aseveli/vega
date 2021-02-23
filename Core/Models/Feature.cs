@@ -2,19 +2,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace vega.Models
+namespace vega.Core.Models
 {
-    public class Make
+    public class Feature
     {
         public int Id { get; set; }
+
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
-        public ICollection<Model> Models { get; set; }
+        public ICollection<Vehicle> Vehicles { get; set; }
 
-        public Make()
+        public Feature()
         {
-            this.Models = new Collection<Model>();
+            this.Vehicles = new Collection<Vehicle>();
         }
     }
 }

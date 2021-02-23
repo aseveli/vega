@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using vega.Persistence;
 using AutoMapper;
+using vega.Core;
+
 namespace vega
 {
     public class Startup
@@ -22,12 +24,22 @@ namespace vega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
+
+            services.AddScoped<IModelRepository, ModelRepository>();
+
+            services.AddScoped<IFeatureRepository, FeatureRepository>();
+
+            services.AddScoped<IMakeRepository, MakeRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
