@@ -1,0 +1,74 @@
+<h2>Vehicles</h2>
+<p>
+  <a [routerLink]="['/vehicles/new']" class="btn btn-primary">New Vehicle</a>
+</p>
+<div class="form-group card bg-light">
+  <div class="card-body">
+    <label for="make">Make</label>
+    <select
+      id="make"
+      class="form-control"
+      [(ngModel)]="query.makeId"
+      (change)="onModelFilterChange()"
+    >
+      <option value=""></option>
+      <option *ngFor="let m of makes" value="{{ m.id }}">
+        {{ m.name }}
+      </option>
+    </select>
+    <br />
+    <div id="dvModel" *ngIf="query.makeId">
+      <label for="model">Model</label>
+      <select
+        id="model"
+        class="form-control"
+        [(ngModel)]="query.modelId"
+        (change)="onFilterChange()"
+      >
+        <option value=""></option>
+        <option *ngFor="let m of filteredModels" value="{{ m.id }}">
+          {{ m.name }}
+        </option>
+      </select>
+    </div>
+    <br />
+    <button class="btn btn-primary" (click)="resetFilter()">Reset</button>
+  </div>
+</div>
+<table class="table">
+  <caption>
+    List of Vehicles
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col" *ngFor="let c of columns">
+        <div *ngIf="c.isSortable" (click)="sortBy(c.key)">
+          {{ c.title }}
+          <em
+            *ngIf="query.sortBy === c.key"
+            class="fa"
+            [class.fa-sort-asc]="!query.isSortAscending"
+            [title]="
+              query.isSortAscending ? 'Sort Descending' : 'Sort Ascending'
+            "
+            [class.fa-sort-desc]="query.isSortAscending"
+          ></em>
+        </div>
+        <div *ngIf="!c.isSortable">
+          {{ c.title }}
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let v of vehicles">
+      <td>{{ v.id }}</td>
+      <td>{{ v.make.name }}</td>
+      <td>{{ v.model.name }}</td>
+      <td>{{ v.contact.name }}</td>
+      <td>
+        <a [routerLink]="['/vehicles/', v.id]">View</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

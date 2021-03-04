@@ -1,4 +1,4 @@
-import { IModel } from './model';
+import { IModel } from "./imodel";
 
 export interface IMake {
   id: number;

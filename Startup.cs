@@ -9,6 +9,10 @@ using Microsoft.Extensions.Hosting;
 using vega.Persistence;
 using AutoMapper;
 using vega.Core;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Reflection;
+using System.IO;
 
 namespace vega
 {
@@ -41,6 +45,34 @@ namespace vega
             services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
             services.AddControllersWithViews();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Vega API",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://www.binaryfox.ca"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Todd Pinel",
+                        Email = string.Empty,
+                        Url = new Uri("https://www.binaryfox.ca"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://www.binaryfox.ca"),
+                    }
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -54,6 +86,11 @@ namespace vega
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vehicle API V1");
+                });
             }
             else
             {
@@ -64,6 +101,7 @@ namespace vega
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();

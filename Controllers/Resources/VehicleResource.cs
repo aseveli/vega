@@ -7,7 +7,7 @@ namespace vega.Controllers.Resources
     public class VehicleResource
     {
         public int Id { get; set; }
-        public KeyValuePairResource Model { get; set; }
+        public ModelResource Model { get; set; }
         public KeyValuePairResource Make { get; set; }
         public bool IsRegistered { get; set; }
         public ContactResource Contact { get; set; }

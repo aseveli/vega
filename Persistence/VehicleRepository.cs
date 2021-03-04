@@ -2,6 +2,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using vega.Core.Models;
 using vega.Core;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.Linq.Expressions;
+using vega.Extensions;
 
 namespace vega.Persistence
 {
@@ -12,10 +17,38 @@ namespace vega.Persistence
         {
             this._context = context;
         }
-
         public void Add(Vehicle vehicle)
         {
             this._context.Add(vehicle);
+        }
+        public async Task<IEnumerable<Vehicle>> GetVehicles(VehicleQuery qryObject)
+        {
+            var query = this._context.Vehicles
+                .Include(v => v.Model)
+                    .ThenInclude(m => m.Make)
+                .AsQueryable();
+
+            if (qryObject.MakeId.HasValue)
+            {
+                query = query.Where(v => v.Model.MakeId == qryObject.MakeId.Value);
+            }
+
+            if (qryObject.ModelId.HasValue)
+            {
+                query = query.Where(v => v.Model.Id == qryObject.ModelId.Value);
+            }
+
+            var columnsMap = new Dictionary<string, Expression<Func<Vehicle, object>>>
+            {
+                ["make"] = v => v.Model.Make.Name,
+                ["model"] = v => v.Model.Name,
+                ["contactName"] = v => v.ContactName,
+                ["id"] = v => v.Id,
+            };
+
+            query = query.ApplyOrdering(qryObject, columnsMap);
+
+            return await query.ToListAsync();
         }
         public async Task<Vehicle> GetVehicle(int id, bool includeRelated = true)
         {

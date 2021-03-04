@@ -6,10 +6,10 @@ namespace vega.Controllers.Resources
 {
     public class MakeResource : KeyValuePairResource
     {
-        public ICollection<KeyValuePairResource> Models { get; set; }
+        public ICollection<KeyValuePairResource> Makes { get; set; }
         public MakeResource()
         {
-            this.Models = new Collection<KeyValuePairResource>();
+            this.Makes = new Collection<KeyValuePairResource>();
         }
     }
 }
